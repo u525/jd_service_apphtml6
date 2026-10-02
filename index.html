@@ -739,10 +739,43 @@ document.getElementById('cfgTestBtn').addEventListener('click', () => {
 /* ---------- AUTHENTIFICATION GOOGLE & RÔLES ---------- */
 const SESSION_KEY = 'jd_service_session_v1';
 const ROLE_PERMISSIONS = {
-  administrateur: ['dash','sav','ventes','catalogue','achats','depenses','techniciens','stock','eservice','parametres','compte','utilisateurs'],
-  technicien: ['dash','sav','compte'],
-  vendeur: ['dash','ventes','catalogue','stock','compte'],
-  gerante: ['dash','ventes','stock','techniciens','eservice','compte'],
+  ADMIN: [
+    'dash',
+    'sav',
+    'ventes',
+    'catalogue',
+    'achats',
+    'depenses',
+    'techniciens',
+    'stock',
+    'eservice',
+    'parametres',
+    'compte',
+    'utilisateurs'
+  ],
+
+  TECHNICIEN: [
+    'dash',
+    'sav',
+    'compte'
+  ],
+
+  VENDEUR: [
+    'dash',
+    'ventes',
+    'catalogue',
+    'stock',
+    'compte'
+  ],
+
+  GERANTE: [
+    'dash',
+    'ventes',
+    'stock',
+    'techniciens',
+    'eservice',
+    'compte'
+  ]
 };
 let session = null;
 let googleAccessToken = null;
@@ -841,42 +874,42 @@ function callAuthApi(action, payload){
 
 }
 function applyRolePermissions(){
+
   if (!session) return;
-  const allowed = ROLE_PERMISSIONS[session.role] || ['dash','compte'];
+
+  const role = String(session.role || '').trim().toUpperCase();
+
+  const allowed =
+    ROLE_PERMISSIONS[role] ||
+    ['dash', 'compte'];
+
   document.querySelectorAll('nav button[data-view]').forEach(btn => {
-    btn.style.display = allowed.includes(btn.dataset.view) ? '' : 'none';
+
+    btn.style.display =
+      allowed.includes(btn.dataset.view)
+        ? ''
+        : 'none';
+
   });
-  document.querySelectorAll('.icon-tile[data-nav]').forEach(t => {
-    t.style.display = allowed.includes(t.dataset.nav) ? '' : 'none';
+
+  document.querySelectorAll('.icon-tile[data-nav]').forEach(tile => {
+
+    tile.style.display =
+      allowed.includes(tile.dataset.nav)
+        ? ''
+        : 'none';
+
   });
-  if (!allowed.includes('utilisateurs')) document.getElementById('navUtilisateurs').style.display = 'none';
-}
-function updateAdminSettingsVisibility(){
-  const isAdmin =
-    session &&
-    String(session.role || '').toUpperCase() === 'ADMIN' &&
-    String(session.statut || '').toUpperCase() === 'ACTIF';
 
-  const cfgBtn = document.getElementById('cfgBtn');
+  const navUtilisateurs =
+    document.getElementById('navUtilisateurs');
 
-  if (cfgBtn) {
-    cfgBtn.style.display = isAdmin ? '' : 'none';
+  if (navUtilisateurs) {
+    navUtilisateurs.style.display =
+      allowed.includes('utilisateurs')
+        ? ''
+        : 'none';
   }
-
-  const lgCfgBtn = document.getElementById('lg_cfgBtn');
-
-  if (lgCfgBtn) {
-    lgCfgBtn.style.display = 'none';
-  }
-}
-function showApp(){
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('appRoot').style.display = 'block';
-
-  applyRolePermissions();
-  updateAdminSettingsVisibility();
-
-  renderCompte();
 }
 /* ---------- Google Identity Services ---------- */
 let googleTokenClient = null;
