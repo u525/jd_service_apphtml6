@@ -707,11 +707,38 @@ document.getElementById('cfgBtn').addEventListener('click', openCfgModal);
 document.getElementById('lg_cfgBtn').addEventListener('click', openCfgModal);
 document.getElementById('cfgCancelBtn').addEventListener('click', () => cfgModalBg.classList.remove('show'));
 document.getElementById('cfgSaveBtn').addEventListener('click', () => {
-  localStorage.setItem(SYNC_KEY, document.getElementById('f_syncUrl').value.trim());
-  localStorage.setItem(GCID_KEY, document.getElementById('f_googleClientId').value.trim());
+
+  const isAdmin =
+    session &&
+    String(session.role || '').trim().toUpperCase() === 'ADMIN' &&
+    String(session.statut || '').trim().toUpperCase() === 'ACTIF';
+
+  if (!isAdmin) {
+    alert('Accès refusé. Seul l’administrateur peut modifier les paramètres.');
+    return;
+  }
+
+  localStorage.setItem(
+    SYNC_KEY,
+    document.getElementById('f_syncUrl').value.trim()
+  );
+
+  localStorage.setItem(
+    GCID_KEY,
+    document.getElementById('f_googleClientId').value.trim()
+  );
+
   cfgModalBg.classList.remove('show');
+
   const needUrl = document.getElementById('lg_needUrl');
-  if (needUrl) needUrl.style.display = (localStorage.getItem(SYNC_KEY) && getGoogleClientId()) ? 'none' : 'block';
+
+  if (needUrl) {
+    needUrl.style.display =
+      (localStorage.getItem(SYNC_KEY) && getGoogleClientId())
+        ? 'none'
+        : 'block';
+  }
+
   initGoogleSignIn();
 });
 document.getElementById('cfgTestBtn').addEventListener('click', () => {
