@@ -508,11 +508,27 @@ const STOCK_KEY = 'jd_service_stock_v1';
 const ESERV_KEY = 'jd_service_eservice_v1';
 const SYNC_KEY = 'jd_service_sync_url';
 
+const SYNC_URL_DEFAULT =
+  'https://script.google.com/macros/s/AKfycbzdTGy9VEsyKHp4UR_Vrl_KoonsnRwtwBUSdtWIpeQ1RkbwpT76pOBzoc-v_SizbTBvbA/exec';
+
+// URL Apps Script automatiquement configurée
+if (!localStorage.getItem(SYNC_KEY)) {
+  localStorage.setItem(SYNC_KEY, SYNC_URL_DEFAULT);
+}
+
 function load(key, seed){
-  try { const raw = localStorage.getItem(key); if (raw) return JSON.parse(raw); } catch(e){}
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw);
+  } catch(e){}
   return seed.slice();
 }
-function save(key, d){ try { localStorage.setItem(key, JSON.stringify(d)); } catch(e){} }
+
+function save(key, d){
+  try {
+    localStorage.setItem(key, JSON.stringify(d));
+  } catch(e){}
+}
 
 let sav = load(SAV_KEY, SAV_SEED);
 let catalogue = load(CAT_KEY, CAT_SEED);
@@ -522,7 +538,6 @@ let techniciens = load(TECH_KEY, TECH_SEED);
 let achats = load(ACHATS_KEY, ACHATS_SEED);
 let stock = load(STOCK_KEY, STOCK_SEED);
 let eservice = load(ESERV_KEY, ESERV_SEED);
-
 /* ---------- PARAMÈTRES ---------- */
 const PARAMS_KEY = 'jd_service_parametres_v1';
 const PARAMS_DEFAULT = {
