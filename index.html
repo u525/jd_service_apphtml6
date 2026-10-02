@@ -920,6 +920,51 @@ function applyRolePermissions(){
     lgCfgBtn.style.display = 'none';
   }
 }
+  // ================================
+// CONFIGURATION SYNCHRONISATION
+// ================================
+
+document.getElementById('cfgBtn').addEventListener('click', function () {
+
+    const modal = document.getElementById('cfgModalBg');
+
+    if (!modal) return;
+
+    document.getElementById('f_syncUrl').value =
+        localStorage.getItem(SYNC_KEY) || '';
+
+    document.getElementById('f_googleClientId').value =
+        getGoogleClientId() || '';
+
+    document.getElementById('cfgTestResult').style.display = 'none';
+
+    modal.style.display = 'flex';
+});
+
+document.getElementById('cfgCancelBtn').addEventListener('click', function () {
+    document.getElementById('cfgModalBg').style.display = 'none';
+});
+
+document.getElementById('cfgSaveBtn').addEventListener('click', function () {
+
+    const url = document.getElementById('f_syncUrl').value.trim();
+    const clientId = document.getElementById('f_googleClientId').value.trim();
+
+    if (!url) {
+        alert('Veuillez saisir l’URL Apps Script.');
+        return;
+    }
+
+    localStorage.setItem(SYNC_KEY, url);
+
+    if (clientId) {
+        localStorage.setItem('jd_service_google_client_id', clientId);
+    }
+
+    document.getElementById('cfgModalBg').style.display = 'none';
+
+    alert('Configuration de synchronisation enregistrée.');
+});
   window.showApp = function(){
 
   document.getElementById('loginScreen').style.display = 'none';
