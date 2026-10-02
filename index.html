@@ -647,6 +647,7 @@ document.querySelectorAll('.icon-tile').forEach(t => t.addEventListener('click',
 
 /* ---------- SYNC ---------- */
 function syncToSheet(sheetName, rec, action){
+
   const url = localStorage.getItem(SYNC_KEY);
 
   if (!url || !googleAccessToken) return;
@@ -657,42 +658,36 @@ function syncToSheet(sheetName, rec, action){
     data: rec
   };
 
-  const form = document.createElement('form');
+  const callbackName =
+    'jdTechSync_' +
+    Date.now() +
+    '_' +
+    Math.random().toString(36).substring(2);
 
-  form.method = 'POST';
-  form.action = url;
-  form.target = 'jdTechSyncFrame';
-  form.style.display = 'none';
+  const sep = url.includes('?') ? '&' : '?';
 
-  const payloadInput = document.createElement('input');
-  payloadInput.type = 'hidden';
-  payloadInput.name = 'payload';
-  payloadInput.value = JSON.stringify(data);
+  const requestUrl =
+    url +
+    sep +
+    'access_token=' +
+    encodeURIComponent(googleAccessToken) +
+    '&action=' +
+    encodeURIComponent(action || 'append') +
+    '&payload=' +
+    encodeURIComponent(JSON.stringify(data));
 
-  const tokenInput = document.createElement('input');
-  tokenInput.type = 'hidden';
-  tokenInput.name = 'access_token';
-  tokenInput.value = googleAccessToken;
+  const iframe = document.createElement('iframe');
 
-  form.appendChild(payloadInput);
-  form.appendChild(tokenInput);
+  iframe.style.display = 'none';
+  iframe.src = requestUrl;
 
-  let iframe = document.getElementById('jdTechSyncFrame');
-
-  if (!iframe) {
-    iframe = document.createElement('iframe');
-    iframe.id = 'jdTechSyncFrame';
-    iframe.name = 'jdTechSyncFrame';
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-  }
-
-  document.body.appendChild(form);
-  form.submit();
+  document.body.appendChild(iframe);
 
   setTimeout(function(){
-    form.remove();
-  }, 5000);
+    if (iframe.parentNode) {
+      iframe.parentNode.removeChild(iframe);
+    }
+  }, 10000);
 
   console.log('JD TECH : synchronisation envoyée à Apps Script');
 }
