@@ -651,118 +651,51 @@ function syncToSheet(sheetName, rec, action){
 
   if (!url || !googleAccessToken) return;
 
-  const sep = url.includes('?') ? '&' : '?';
-
   const data = {
     sheet: sheetName,
     action: action || 'append',
     data: rec
   };
 
-  fetch(
-    url + sep + 'access_token=' +
-    encodeURIComponent(googleAccessToken),
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type':
-          'application/x-www-form-urlencoded;charset=UTF-8'
-      },
-      body:
-        'payload=' +
-        encodeURIComponent(JSON.stringify(data))
-    }
-  )
-  .then(function(response){
+  const form = document.createElement('form');
 
-    if (!response.ok) {
-      throw new Error(
-        'Erreur serveur HTTP ' + response.status
-      );
-    }
+  form.method = 'POST';
+  form.action = url;
+  form.target = 'jdTechSyncFrame';
+  form.style.display = 'none';
 
-    return response.json();
+  const payloadInput = document.createElement('input');
+  payloadInput.type = 'hidden';
+  payloadInput.name = 'payload';
+  payloadInput.value = JSON.stringify(data);
 
-  })
-  .catch(function(error){
+  const tokenInput = document.createElement('input');
+  tokenInput.type = 'hidden';
+  tokenInput.name = 'access_token';
+  tokenInput.value = googleAccessToken;
 
-    console.error(
-      'Erreur synchronisation JD TECH :',
-      error
-    );
+  form.appendChild(payloadInput);
+  form.appendChild(tokenInput);
 
-  });
+  let iframe = document.getElementById('jdTechSyncFrame');
+
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.id = 'jdTechSyncFrame';
+    iframe.name = 'jdTechSyncFrame';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+
+  setTimeout(function(){
+    form.remove();
+  }, 5000);
+
+  console.log('JD TECH : synchronisation envoyée à Apps Script');
 }
-  const GCID_KEY = 'jd_service_google_client_id';
-const GOOGLE_CLIENT_ID_DEFAULT = '1003085538460-ljfpov5i1fb4c832kkomq44r162r8ufr.apps.googleusercontent.com';
-function getGoogleClientId(){ return localStorage.getItem(GCID_KEY) || GOOGLE_CLIENT_ID_DEFAULT; }
-
-const cfgModalBg = document.getElementById('cfgModalBg');
-function openCfgModal(){
-  document.getElementById('f_syncUrl').value = localStorage.getItem(SYNC_KEY) || '';
-  document.getElementById('f_googleClientId').value = getGoogleClientId();
-  cfgModalBg.classList.add('show');
-}
-document.getElementById('cfgBtn').addEventListener('click', openCfgModal);
-document.getElementById('lg_cfgBtn').addEventListener('click', openCfgModal);
-document.getElementById('cfgCancelBtn').addEventListener('click', () => cfgModalBg.classList.remove('show'));
-document.getElementById('cfgSaveBtn').addEventListener('click', () => {
-
-  const isAdmin =
-    session &&
-    String(session.role || '').trim().toUpperCase() === 'ADMIN' &&
-    String(session.statut || '').trim().toUpperCase() === 'ACTIF';
-
-  if (!isAdmin) {
-    alert('Accès refusé. Seul l’administrateur peut modifier les paramètres.');
-    return;
-  }
-
-  localStorage.setItem(
-    SYNC_KEY,
-    document.getElementById('f_syncUrl').value.trim()
-  );
-
-  localStorage.setItem(
-    GCID_KEY,
-    document.getElementById('f_googleClientId').value.trim()
-  );
-
-  cfgModalBg.classList.remove('show');
-
-  const needUrl = document.getElementById('lg_needUrl');
-
-  if (needUrl) {
-    needUrl.style.display =
-      (localStorage.getItem(SYNC_KEY) && getGoogleClientId())
-        ? 'none'
-        : 'block';
-  }
-
-  initGoogleSignIn();
-});
-document.getElementById('cfgTestBtn').addEventListener('click', () => {
-  const url = document.getElementById('f_syncUrl').value.trim();
-  const resultEl = document.getElementById('cfgTestResult');
-  resultEl.style.display = 'block';
-  if (!url) { resultEl.style.color = '#e0473c'; resultEl.textContent = "Colle d'abord une URL."; return; }
-  if (!googleAccessToken) {
-    resultEl.style.color = '#f0a500';
-    resultEl.textContent = '⚠️ Connecte-toi avec Google (depuis l\'écran de connexion) avant de tester, car ton Sheet exige un compte Google.';
-    return;
-  }
-  resultEl.style.color = 'inherit';
-  resultEl.textContent = '⏳ Test en cours...';
-  const sep = url.includes('?') ? '&' : '?';
-  fetch(url + sep + 'access_token=' + encodeURIComponent(googleAccessToken), { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({action:'__ping__'}) })
-    .then(r => r.json())
-    .then(() => { resultEl.style.color = '#2fa84f'; resultEl.textContent = '✅ Connexion réussie : le script Apps Script répond bien.'; })
-    .catch(err => {
-      resultEl.style.color = '#e0473c';
-      resultEl.textContent = '❌ Échec (' + err.message + '). Vérifie : 1) déploiement accessible, 2) nouvelle version déployée, 3) URL finissant par /exec.';
-    });
-});
-
 /* ---------- AUTHENTIFICATION GOOGLE & RÔLES ---------- */
 const SESSION_KEY = 'jd_service_session_v1';
 const ROLE_PERMISSIONS = {
