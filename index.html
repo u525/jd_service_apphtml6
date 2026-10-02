@@ -633,15 +633,52 @@ document.querySelectorAll('.icon-tile').forEach(t => t.addEventListener('click',
 /* ---------- SYNC ---------- */
 function syncToSheet(sheetName, rec, action){
   const url = localStorage.getItem(SYNC_KEY);
-  if (!url || !googleAccessToken) return; // pas de sync possible sans connexion Google (accès "Anyone with Google account")
+
+  if (!url || !googleAccessToken) return;
+
   const sep = url.includes('?') ? '&' : '?';
-  fetch(url + sep + 'access_token=' + encodeURIComponent(googleAccessToken), {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ sheet: sheetName, action: action || 'append', data: rec })
-  }).catch(()=>{});
+
+  const data = {
+    sheet: sheetName,
+    action: action || 'append',
+    data: rec
+  };
+
+  fetch(
+    url + sep + 'access_token=' +
+    encodeURIComponent(googleAccessToken),
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type':
+          'application/x-www-form-urlencoded;charset=UTF-8'
+      },
+      body:
+        'payload=' +
+        encodeURIComponent(JSON.stringify(data))
+    }
+  )
+  .then(function(response){
+
+    if (!response.ok) {
+      throw new Error(
+        'Erreur serveur HTTP ' + response.status
+      );
+    }
+
+    return response.json();
+
+  })
+  .catch(function(error){
+
+    console.error(
+      'Erreur synchronisation JD TECH :',
+      error
+    );
+
+  });
 }
-const GCID_KEY = 'jd_service_google_client_id';
+  const GCID_KEY = 'jd_service_google_client_id';
 const GOOGLE_CLIENT_ID_DEFAULT = '1003085538460-ljfpov5i1fb4c832kkomq44r162r8ufr.apps.googleusercontent.com';
 function getGoogleClientId(){ return localStorage.getItem(GCID_KEY) || GOOGLE_CLIENT_ID_DEFAULT; }
 
@@ -700,14 +737,48 @@ try { const raw = localStorage.getItem(SESSION_KEY); if (raw) session = JSON.par
 // pour éviter le "preflight" CORS, qu'Apps Script ne sait pas gérer.
 function callAuthApi(action, payload){
   const url = localStorage.getItem(SYNC_KEY);
-  if (!url) return Promise.reject(new Error('URL de synchronisation non configurée. Configure-la dans ⚙.'));
-  if (!googleAccessToken) return Promise.reject(new Error('Connecte-toi avec Google avant de continuer.'));
+
+  if (!url) {
+    return Promise.reject(
+      new Error('URL de synchronisation non configurée. Configure-la dans ⚙.')
+    );
+  }
+
+  if (!googleAccessToken) {
+    return Promise.reject(
+      new Error('Connecte-toi avec Google avant de continuer.')
+    );
+  }
+
   const sep = url.includes('?') ? '&' : '?';
-  return fetch(url + sep + 'access_token=' + encodeURIComponent(googleAccessToken), {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(Object.assign({ action }, payload))
-  }).then(r => r.json());
+
+  const data = Object.assign(
+    { action: action },
+    payload || {}
+  );
+
+  return fetch(
+    url + sep + 'access_token=' +
+    encodeURIComponent(googleAccessToken),
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      },
+      body: 'payload=' + encodeURIComponent(JSON.stringify(data))
+    }
+  )
+  .then(function(response) {
+
+    if (!response.ok) {
+      throw new Error(
+        'Erreur serveur HTTP ' + response.status
+      );
+    }
+
+    return response.json();
+
+  });
 }
 
 function applyRolePermissions(){
