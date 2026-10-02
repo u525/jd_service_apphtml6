@@ -674,22 +674,54 @@ function syncToSheet(sheetName, rec, action){
     '&action=' +
     encodeURIComponent(action || 'append') +
     '&payload=' +
-    encodeURIComponent(JSON.stringify(data));
+    encodeURIComponent(JSON.stringify(data)) +
+    '&callback=' +
+    encodeURIComponent(callbackName);
 
-  const iframe = document.createElement('iframe');
+  const script = document.createElement('script');
 
-  iframe.style.display = 'none';
-  iframe.src = requestUrl;
+  window[callbackName] = function(response){
 
-  document.body.appendChild(iframe);
+    console.log('JD TECH SYNC :', response);
 
-  setTimeout(function(){
-    if (iframe.parentNode) {
-      iframe.parentNode.removeChild(iframe);
+    try {
+      if (!response || !response.ok) {
+        console.error(
+          'JD TECH SYNC ERREUR :',
+          response && response.message
+            ? response.message
+            : 'Réponse serveur invalide.'
+        );
+      }
+    } finally {
+      delete window[callbackName];
+
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
     }
-  }, 10000);
+  };
 
-  console.log('JD TECH : synchronisation envoyée à Apps Script');
+  script.onerror = function(){
+
+    console.error(
+      'JD TECH SYNC : impossible de contacter le serveur JD TECH.'
+    );
+
+    delete window[callbackName];
+
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+    }
+  };
+
+  script.src = requestUrl;
+
+  document.head.appendChild(script);
+
+  console.log(
+    'JD TECH : synchronisation JSONP envoyée à Apps Script'
+  );
 }
 /* ---------- AUTHENTIFICATION GOOGLE & RÔLES ---------- */
 const SESSION_KEY = 'jd_service_session_v1';
