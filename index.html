@@ -911,6 +911,16 @@ function applyRolePermissions(){
         : 'none';
   }
 }
+  function showApp(){
+
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appRoot').style.display = 'block';
+
+  applyRolePermissions();
+  updateAdminSettingsVisibility();
+
+  renderCompte();
+}
 /* ---------- Google Identity Services ---------- */
 let googleTokenClient = null;
 function initGoogleSignIn(){
