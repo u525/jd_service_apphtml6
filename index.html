@@ -851,20 +851,33 @@ function applyRolePermissions(){
   });
   if (!allowed.includes('utilisateurs')) document.getElementById('navUtilisateurs').style.display = 'none';
 }
+function updateAdminSettingsVisibility(){
+  const isAdmin =
+    session &&
+    String(session.role || '').toUpperCase() === 'ADMIN' &&
+    String(session.statut || '').toUpperCase() === 'ACTIF';
 
+  const cfgBtn = document.getElementById('cfgBtn');
+
+  if (cfgBtn) {
+    cfgBtn.style.display = isAdmin ? '' : 'none';
+  }
+
+  const lgCfgBtn = document.getElementById('lg_cfgBtn');
+
+  if (lgCfgBtn) {
+    lgCfgBtn.style.display = 'none';
+  }
+}
 function showApp(){
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appRoot').style.display = 'block';
+
   applyRolePermissions();
+  updateAdminSettingsVisibility();
+
   renderCompte();
 }
-function showLogin(msg){
-  document.getElementById('appRoot').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'flex';
-  if (msg) { const e = document.getElementById('lg_error'); e.textContent = msg; e.style.display = 'block'; }
-  document.getElementById('lg_needUrl').style.display = (localStorage.getItem(SYNC_KEY) && getGoogleClientId()) ? 'none' : 'block';
-}
-
 /* ---------- Google Identity Services ---------- */
 let googleTokenClient = null;
 function initGoogleSignIn(){
@@ -902,14 +915,23 @@ document.getElementById('lg_googleBtn').addEventListener('click', () => {
   googleTokenClient.requestAccessToken();
 });
 
-showLogin(); // le jeton Google expire vite (~1h) : on redemande toujours une connexion au chargement de la page
+function showLogin(msg){
+  document.getElementById('appRoot').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
 
-document.getElementById('cp_logoutBtn').addEventListener('click', () => {
-  if (!confirm('Se déconnecter ?')) return;
-  localStorage.removeItem(SESSION_KEY);
-  session = null; googleAccessToken = null;
-  showLogin();
-});
+  updateAdminSettingsVisibility();
+
+  if (msg) {
+    const e = document.getElementById('lg_error');
+    e.textContent = msg;
+    e.style.display = 'block';
+  }
+
+  document.getElementById('lg_needUrl').style.display =
+    (localStorage.getItem(SYNC_KEY) && getGoogleClientId())
+      ? 'none'
+      : 'block';
+}
 
 function renderCompte(){
   if (!session) return;
