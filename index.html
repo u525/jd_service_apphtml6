@@ -294,15 +294,18 @@ input, select, textarea { font-family:inherit; font-size:14px; padding:9px 10px;
 <div class="modal-bg" id="achatModalBg">
   <div class="modal">
     <h2>Nouvel achat fournisseur</h2>
-    <div class="field"><label>N° bon</label><input id="a_bon"></div>
+    <p style="font-size:11.5px;opacity:.6;">N° de bon, désignation, prix unitaire et montant sont calculés automatiquement par le Google Sheet.</p>
     <div class="field"><label>Référence produit (issue du stock)</label>
       <select id="a_ref"><option value="">— Choisir —</option></select>
     </div>
     <div class="field"><label>Désignation</label><input id="a_designation" readonly></div>
     <div class="field"><label>Fournisseur</label><input id="a_fournisseur"></div>
     <div class="field"><label>Quantité</label><input type="number" id="a_qte" value="1"></div>
-    <div class="field"><label>Prix unitaire (FCFA)</label><input type="number" id="a_prixUnit"></div>
-    <div class="field"><label>Statut</label><select id="a_statut"><option>En attente</option><option>Reçu</option></select></div>
+    <div class="field"><label>Prix unitaire (FCFA) — indicatif</label><input type="number" id="a_prixUnit" readonly></div>
+    <div class="field"><label>Date de réception (si déjà reçu)</label><input type="date" id="a_dateReception"></div>
+    <div class="field"><label>Statut</label>
+      <select id="a_statut"><option>Commandé</option><option>En transit</option><option>Reçu partiel</option><option>Reçu</option><option>Annulé</option></select>
+    </div>
     <div class="modal-actions">
       <button class="btn ghost" id="achatCancelBtn">Annuler</button>
       <button class="btn gold" id="achatSaveBtn">Enregistrer</button>
@@ -313,7 +316,9 @@ input, select, textarea { font-family:inherit; font-size:14px; padding:9px 10px;
 <div class="modal-bg" id="depModalBg">
   <div class="modal">
     <h2>Nouvelle dépense</h2>
-    <div class="field"><label>Type de dépense</label><input id="d_type" placeholder="Loyer, frais généraux..."></div>
+    <div class="field"><label>Type de dépense</label>
+      <select id="d_type"><option>SALAIRES & CHARGES (−)</option><option>LOYER & CHARGES LOCAL (−)</option><option>FRAIS GÉNÉRAUX (−)</option></select>
+    </div>
     <div class="field"><label>Montant (FCFA)</label><input type="number" id="d_montant"></div>
     <div class="field"><label>Signataire</label><input id="d_signataire"></div>
     <div class="modal-actions">
@@ -339,11 +344,25 @@ input, select, textarea { font-family:inherit; font-size:14px; padding:9px 10px;
 <div class="modal-bg" id="esModalBg">
   <div class="modal">
     <h2>Nouvelle tâche E-Service</h2>
-    <div class="field"><label>Service (SIM, solaire, casier judiciaire...)</label><input id="e_service"></div>
+    <div class="field"><label>Service</label>
+      <select id="e_service">
+        <option>CIP</option><option>ACTE DE NAISSANCE</option><option>CORRECTION DOCUMENT</option>
+        <option>CASIER JUDICIAIRE</option><option>IFU</option><option>SIM</option>
+        <option>REGISTRE DE COMMERCE</option><option>INSTALLATION SOLAIRE</option><option>DEPANAGE SOLAIRE</option>
+        <option>CHARGE</option><option>AUTRES</option>
+      </select>
+    </div>
     <div class="field"><label>Client</label><input id="e_client"></div>
+    <div class="field"><label>Nombre</label><input type="number" id="e_nombre" value="1" min="1"></div>
     <div class="field"><label>Montant TTC (FCFA)</label><input type="number" id="e_montant"></div>
-    <div class="field"><label>Statut de paiement</label><select id="e_statutPaiement"><option>PAYE</option><option>NON PAYE</option></select></div>
-    <div class="field"><label>Statut document</label><select id="e_statutDocument"><option>🟢 TRAITÉ</option><option>🟡 EN COURS</option><option>🔴 EN ATTENTE</option></select></div>
+    <div class="field"><label>Statut de paiement</label><select id="e_statutPaiement"><option>PAYE</option><option>EN ATTENTE DE PAIEMENT</option></select></div>
+    <div class="field"><label>Statut document</label>
+      <select id="e_statutDocument">
+        <option>🟠 EN COURS DE TRAITEMENT</option><option>🟢 TRAITÉ</option><option>🟢 DISPONIBLE</option>
+        <option>🟣 TRANSMIS AU CLIENT</option><option>⚫ ANNULÉ</option><option>🔴 REJETÉ</option>
+        <option>🟠 DOSSIER INCOMPLET</option><option>🔴 ÉCHEC</option><option>⚪ REMBOURSÉ</option>
+      </select>
+    </div>
     <div class="modal-actions">
       <button class="btn ghost" id="esCancelBtn">Annuler</button>
       <button class="btn gold" id="esSaveBtn">Enregistrer</button>
@@ -363,14 +382,24 @@ input, select, textarea { font-family:inherit; font-size:14px; padding:9px 10px;
     <div class="field"><label>Appareil / Marque-Modèle</label><input id="f_appareil"></div>
     <div class="field"><label>N° IMEI / Série</label><input id="f_imei"></div>
     <div class="field"><label>Panne déclarée</label><input id="f_panne"></div>
-    <div class="field"><label>Diagnostic (optionnel)</label><input id="f_diagnostic"></div>
     <div class="field"><label>Technicien</label><input id="f_technicien"></div>
     <div class="field"><label>Date de dépôt</label><input type="date" id="f_date"></div>
-    <div class="field"><label>Urgence</label>
-      <select id="f_urgence"><option value="standard">Standard (délai normal)</option><option value="urgent">Urgent</option></select>
+    <div class="field"><label>Délai d'exécution (heures)</label>
+      <select id="f_delai">
+        <option>3</option><option>5</option><option>10</option><option>18</option><option>24</option>
+        <option>48</option><option>72</option><option>96</option><option>120</option><option>150</option>
+        <option>200</option><option>250</option><option>300</option><option>450</option><option>500</option>
+        <option>550</option><option>600</option><option>750</option><option>900</option><option>1000</option>
+      </select>
     </div>
     <div class="field"><label>Montant estimé (FCFA)</label><input type="number" id="f_montant" value="0"></div>
-    <div class="field"><label>Notes</label><textarea id="f_notes" rows="2"></textarea></div>
+    <div class="field"><label>Diagnostic / Notes</label><textarea id="f_notes" rows="2"></textarea></div>
+    <div class="field" style="display:flex;align-items:center;gap:8px;">
+      <input type="checkbox" id="f_notifTech" style="width:auto;"><label style="margin:0;font-size:13px;">Notifier le technicien</label>
+    </div>
+    <div class="field" style="display:flex;align-items:center;gap:8px;">
+      <input type="checkbox" id="f_notifClient" style="width:auto;"><label style="margin:0;font-size:13px;">Notifier le client</label>
+    </div>
     <div class="modal-actions">
       <button class="btn ghost" id="cancelBtn">Annuler</button>
       <button class="btn gold" id="saveBtn">Ouvrir le dossier</button>
@@ -383,19 +412,24 @@ input, select, textarea { font-family:inherit; font-size:14px; padding:9px 10px;
   <div class="modal">
     <h2>🔒 Clôturer le dossier <span id="close_dossierLabel"></span></h2>
     <div class="field"><label>Matériel utilisé (issu du stock)</label>
-      <div style="display:flex;gap:6px;">
-        <select id="c_materielSel" style="flex:1;"></select>
-        <input type="number" id="c_materielQte" value="1" min="1" style="width:70px;">
-        <button class="btn ghost" id="c_addMaterielBtn" type="button">+</button>
-      </div>
-      <div id="c_materielList" style="margin-top:8px;"></div>
+      <select id="c_materielSel"><option value="">— Aucun —</option></select>
     </div>
+    <div class="field"><label>Quantité utilisée</label><input type="number" id="c_materielQte" value="1" min="1"></div>
     <div class="field"><label>Montant final (FCFA)</label><input type="number" id="c_montant"></div>
     <div class="field"><label>Statut de paiement</label>
-      <select id="c_statutPaiement"><option>Aucun paiement</option><option>Récupéré</option><option>Restitué</option></select>
+      <select id="c_statutPaiement">
+        <option>Récupéré</option><option>En attente de récupération</option>
+        <option>Payé en attente de récupération</option><option>Récupéré /Dette</option>
+        <option>Terminé</option><option>Non réparable</option><option>Restitué</option>
+        <option selected>Aucun paiement </option><option>Paiement partiel </option>
+      </select>
     </div>
     <div class="field"><label>Statut de la réparation</label>
-      <select id="c_statutReparation"><option>Terminé</option><option>Restitué</option></select>
+      <select id="c_statutReparation">
+        <option>Déposé</option><option>En diagnostic</option><option>En cours</option>
+        <option>En attente pièces</option><option selected>Terminé</option>
+        <option>Non réparable</option><option>Restitué</option><option>En attente du client</option>
+      </select>
     </div>
     <div class="modal-actions">
       <button class="btn ghost" id="closeCancelBtn">Annuler</button>
@@ -412,9 +446,14 @@ input, select, textarea { font-family:inherit; font-size:14px; padding:9px 10px;
       <select id="v_ref"></select>
     </div>
     <div class="field"><label>Quantité</label><input type="number" id="v_qte" value="1" min="1"></div>
-    <div class="field"><label>Prix unitaire (FCFA)</label><input type="number" id="v_prixUnit"></div>
+    <div class="field"><label>N° IMEI / Série (si applicable)</label><input id="v_imei"></div>
+    <div class="field"><label>Prix unitaire (FCFA)</label><input type="number" id="v_prixUnit" readonly></div>
+    <div class="field"><label>Remise (montant FCFA)</label><input type="number" id="v_remise" value="0"></div>
     <div class="field"><label>Mode de paiement</label>
-      <select id="v_mode"><option>Espèces</option><option>Orange Money</option><option>MTN MoMo</option><option>Wave</option><option>Celtiis Cash</option></select>
+      <select id="v_mode">
+        <option>Espèces</option><option>Orange Money</option><option>MTN MoMo</option><option>Wave</option>
+        <option>Virement</option><option>Chèque</option><option>Crédit</option><option>Moov money</option><option>Celtiis cash</option>
+      </select>
     </div>
     <div class="modal-actions">
       <button class="btn ghost" id="venteCancelBtn">Annuler</button>
@@ -427,16 +466,26 @@ input, select, textarea { font-family:inherit; font-size:14px; padding:9px 10px;
 <div class="modal-bg" id="prodModalBg">
   <div class="modal">
     <h2>Nouveau produit</h2>
-    <div class="field"><label>Référence</label><input id="p_ref"></div>
+    <p style="font-size:11.5px;opacity:.6;">La référence et le stock actuel sont calculés automatiquement par le Google Sheet — pas de saisie ici.</p>
     <div class="field"><label>Désignation</label><input id="p_designation"></div>
-    <div class="field"><label>Catégorie</label><input id="p_categorie"></div>
+    <div class="field"><label>Catégorie</label>
+      <select id="p_categorie">
+        <option>Smartphones</option><option>Ordinateurs & Tablettes</option><option>Télévisions</option>
+        <option>Audio & Son</option><option>Photo & Vidéo</option><option>Accessoires Téléphonie</option>
+        <option>Bureautique</option><option>Gaming</option><option>Électroménager</option>
+        <option>Énergie & Solaire</option><option>Pièces & Composants</option><option>Occasion / Reconditionné</option>
+        <option>Matériel de travail</option>
+      </select>
+    </div>
     <div class="field"><label>Marque</label><input id="p_marque"></div>
     <div class="field"><label>Modèle / Réf. fabricant</label><input id="p_modele"></div>
     <div class="field"><label>Alias / mots-clés (séparés par des virgules)</label><input id="p_alias"></div>
     <div class="field"><label>Prix d'achat (FCFA)</label><input type="number" id="p_prixAchat"></div>
     <div class="field"><label>Prix de vente (FCFA)</label><input type="number" id="p_prixVente"></div>
-    <div class="field"><label>Stock actuel</label><input type="number" id="p_stock" value="0"></div>
     <div class="field"><label>Stock minimum</label><input type="number" id="p_stockMin" value="2"></div>
+    <div class="field"><label>Statut</label>
+      <select id="p_statut"><option>En vente</option><option>En SAV</option><option>Rupture</option><option>Discontinué</option></select>
+    </div>
     <div class="modal-actions">
       <button class="btn ghost" id="prodCancelBtn">Annuler</button>
       <button class="btn gold" id="prodSaveBtn">Enregistrer</button>
@@ -580,11 +629,12 @@ function genId(prefix, list, field){
 }
 
 /* ---------- SAV : échéance / pénalité / durée ---------- */
+// Estimation locale uniquement (affichage) — le Sheet reste la seule source de vérité (colonnes S,T,U,V,X, jamais écrites par JD TECH)
+// Formule miroir du Sheet : ÉCHÉANCE = DATE DÉPÔT + DÉLAI (heures)
 function calcEcheance(rec){
   if (!rec.dateHeureDepot) return null;
   const start = new Date(rec.dateHeureDepot);
-  if (rec.urgence === 'urgent') start.setHours(start.getHours() + (Number(parametres.delaiUrgent)||1));
-  else start.setDate(start.getDate() + (Number(parametres.delaiStandard)||3));
+  start.setHours(start.getHours() + (Number(rec.delai)||3));
   return start;
 }
 function calcPenalite(rec){
@@ -1099,7 +1149,8 @@ function repCard(d, withActions){
   const closeBtn = (withActions && !ferme) ? `<button class="btn gold" style="margin-top:8px;width:100%;" onclick="openCloseModal('${d.dossier}')">🔒 Clôturer le dossier</button>` : '';
   const penalite = !ferme ? calcPenalite(d) : (d.penalite||0);
   const penaliteHtml = penalite > 0 ? `<div class="muted" style="color:var(--danger);">⚠️ Pénalité : ${fmtFCFA(penalite)} (${joursRetardCount(d)} j de retard)</div>` : '';
-  const materiels = (d.materiels && d.materiels.length) ? `<div class="muted">🔧 ${d.materiels.map(m=>`${m.designation} ×${m.qte}`).join(', ')}</div>` : '';
+  const matInfo = stock.find(s => s.ref === d.materielUtilise);
+  const materiels = d.materielUtilise ? `<div class="muted">🔧 ${matInfo ? matInfo.designation : d.materielUtilise} ×${d.qteUtilise||1}</div>` : '';
   const duree = (ferme && d.dateHeureDepot && d.dateHeureFin) ? `<div class="muted">⏱️ Durée réelle : ${fmtDuree(new Date(d.dateHeureFin) - new Date(d.dateHeureDepot))}</div>` : '';
   return `<div class="rep">
     <div class="rep-top"><b>${d.dossier} — ${d.client}</b><span class="badge ${badgeClass(d.statutReparation)}">${d.statutReparation||'-'}</span></div>
@@ -1361,7 +1412,6 @@ document.getElementById('fabAdd').addEventListener('click', () => {
   } else if (activeView === 'catalogue') {
     document.getElementById('prodModalBg').classList.add('show');
   } else if (activeView === 'achats') {
-    document.getElementById('a_bon').value = genId('ACH', achats, 'bon');
     const selA = document.getElementById('a_ref');
     selA.innerHTML = '<option value="">— Choisir —</option>' + stock.map(s => `<option value="${s.ref}">${s.designation} (${s.ref})</option>`).join('');
     document.getElementById('a_designation').value = '';
@@ -1388,67 +1438,61 @@ document.getElementById('saveBtn').addEventListener('click', () => {
     appareil: document.getElementById('f_appareil').value,
     imei: document.getElementById('f_imei').value,
     panne: document.getElementById('f_panne').value,
-    diagnostic: document.getElementById('f_diagnostic').value,
     technicien: document.getElementById('f_technicien').value,
     dateDepot: dateDepot,
     dateHeureDepot: dateDepot ? new Date(dateDepot).toISOString() : new Date().toISOString(),
-    urgence: document.getElementById('f_urgence').value,
+    delai: Number(document.getElementById('f_delai').value)||3,
     montant: Number(document.getElementById('f_montant').value)||0,
-    notes: document.getElementById('f_notes').value,
-    statutPaiement: 'Aucun paiement',
-    statutReparation: 'En cours',
-    materiels: [], dateHeureFin: '',
+    diagnostic: document.getElementById('f_notes').value,
+    notifTech: document.getElementById('f_notifTech').checked,
+    notifClient: document.getElementById('f_notifClient').checked,
+    statutPaiement: 'Aucun paiement ',
+    statutReparation: 'Déposé',
+    materielUtilise: '', qteUtilise: 0, dateHeureFin: '',
   };
   if (!rec.client || !rec.appareil){ alert('Client et appareil sont requis.'); return; }
-  sav.push(rec); save(SAV_KEY, sav); syncToSheet('SAV & REPARATIONS', rec, 'append');
+  sav.push(rec); save(SAV_KEY, sav);
+  // Payload = uniquement les colonnes de saisie B..J + P,Q,R (K..O restent vides à l'ouverture ou calculées)
+  syncToSheet('SAV & REPARATIONS', {
+    dossier: rec.dossier, client: rec.client, tel: rec.tel, appareil: rec.appareil,
+    imei: rec.imei, panne: rec.panne, technicien: rec.technicien, delai: rec.delai,
+    dateDepot: rec.dateDepot, montant: rec.montant, diagnostic: rec.diagnostic,
+    notifTech: rec.notifTech, notifClient: rec.notifClient,
+  }, 'append');
   document.getElementById('modalBg').classList.remove('show');
-  ['f_client','f_tel','f_appareil','f_imei','f_panne','f_diagnostic','f_technicien','f_montant','f_notes'].forEach(id => document.getElementById(id).value = '');
+  ['f_client','f_tel','f_appareil','f_imei','f_panne','f_technicien','f_montant','f_notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f_notifTech').checked = false;
+  document.getElementById('f_notifClient').checked = false;
   renderDash(); renderSav();
 });
 
 /* ---------- SAV modal : Clôture ---------- */
+// Conforme au Sheet : un seul matériel (colonne K) + une seule quantité (colonne L)
 let closingDossier = null;
-let closingMateriels = [];
-function renderClosingMateriels(){
-  document.getElementById('c_materielList').innerHTML = closingMateriels.map((m,i) =>
-    `<div class="rep" style="padding:8px 10px;display:flex;justify-content:space-between;align-items:center;">
-      <span>${m.designation} × ${m.qte}</span>
-      <button class="btn ghost" style="padding:4px 10px;" onclick="removeClosingMateriel(${i})">✕</button>
-    </div>`
-  ).join('') || '<div class="muted">Aucun matériel ajouté</div>';
-}
-function removeClosingMateriel(i){ closingMateriels.splice(i,1); renderClosingMateriels(); }
 function openCloseModal(dossier){
   closingDossier = dossier;
-  closingMateriels = [];
   const rec = sav.find(d => d.dossier === dossier);
   if (!rec) return;
   document.getElementById('close_dossierLabel').textContent = dossier;
   const sel = document.getElementById('c_materielSel');
-  sel.innerHTML = '<option value="">— Choisir —</option>' + stock.map(s => `<option value="${s.ref}">${s.designation} (${s.ref}) — stock:${s.stockActuel}</option>`).join('');
+  sel.innerHTML = '<option value="">— Aucun —</option>' + stock.map(s => `<option value="${s.ref}">${s.designation} (${s.ref}) — stock:${s.stockActuel}</option>`).join('');
   document.getElementById('c_materielQte').value = 1;
   document.getElementById('c_montant').value = rec.montant || 0;
-  renderClosingMateriels();
   document.getElementById('closeModalBg').classList.add('show');
 }
-document.getElementById('c_addMaterielBtn').addEventListener('click', () => {
-  const ref = document.getElementById('c_materielSel').value;
-  const qte = Number(document.getElementById('c_materielQte').value)||1;
-  const s = stock.find(s => s.ref === ref);
-  if (!s) return;
-  closingMateriels.push({ ref: s.ref, designation: s.designation, qte });
-  renderClosingMateriels();
-});
 document.getElementById('closeCancelBtn').addEventListener('click', () => document.getElementById('closeModalBg').classList.remove('show'));
 document.getElementById('closeSaveBtn').addEventListener('click', () => {
   const rec = sav.find(d => d.dossier === closingDossier);
   if (!rec) return;
-  closingMateriels.forEach(m => {
-    const s = stock.find(s => s.ref === m.ref);
-    if (s) s.stockActuel = Math.max(0, (Number(s.stockActuel)||0) - m.qte);
-  });
-  save(STOCK_KEY, stock);
-  rec.materiels = closingMateriels.slice();
+  const matRef = document.getElementById('c_materielSel').value;
+  const qte = Number(document.getElementById('c_materielQte').value)||0;
+  if (matRef) {
+    const s = stock.find(s => s.ref === matRef);
+    if (s) { s.stockActuel = Math.max(0, (Number(s.stockActuel)||0) - qte); save(STOCK_KEY, stock); }
+  }
+  // K = MATERIEL UTILISE (référence catalogue), L = QUANTITE UTILISEE — conforme au Sheet
+  rec.materielUtilise = matRef;
+  rec.qteUtilise = matRef ? qte : 0;
   rec.montant = Number(document.getElementById('c_montant').value)||0;
   rec.statutPaiement = document.getElementById('c_statutPaiement').value;
   rec.statutReparation = document.getElementById('c_statutReparation').value;
@@ -1457,7 +1501,15 @@ document.getElementById('closeSaveBtn').addEventListener('click', () => {
   rec.penalite = penalite;
   rec.totalAPayer = rec.montant + penalite;
   save(SAV_KEY, sav);
-  syncToSheet('SAV & REPARATIONS', rec, 'update');
+  // Payload = uniquement les colonnes de saisie du Sheet (K,L,M,N,O) — S,T,U,V,X restent des formules
+  syncToSheet('SAV & REPARATIONS', {
+    dossier: rec.dossier,
+    materielUtilise: rec.materielUtilise,
+    qteUtilise: rec.qteUtilise,
+    montant: rec.montant,
+    statutPaiement: rec.statutPaiement,
+    statutReparation: rec.statutReparation,
+  }, 'update');
   document.getElementById('closeModalBg').classList.remove('show');
   renderDash(); renderSav(); renderStock();
 });
@@ -1477,13 +1529,18 @@ document.getElementById('venteSaveBtn').addEventListener('click', () => {
   const prixUnit = Number(document.getElementById('v_prixUnit').value)||0;
   const totalTTC = qte * prixUnit;
   const benefice = totalTTC - (qte * (Number(p.prixAchat)||0));
+  const imei = document.getElementById('v_imei').value;
+  const remise = Number(document.getElementById('v_remise').value)||0;
+  const modePaiement = document.getElementById('v_mode').value;
   const rec = {
     date: new Date().toISOString().slice(0,10),
-    ticket: genId('VEN', ventes, 'ticket'),
-    ref: p.ref, designation: p.designation, qte, prixUnit, totalTTC,
-    modePaiement: document.getElementById('v_mode').value, benefice,
+    ticket: genId('VEN', ventes, 'ticket'), // généré localement pour le cache ; la vraie colonne C est une formule du Sheet
+    ref: p.ref, designation: p.designation, qte, prixUnit, totalTTC, imei, remise,
+    modePaiement, benefice,
   };
-  ventes.push(rec); save(VENTES_KEY, ventes); syncToSheet('VENTES', rec);
+  ventes.push(rec); save(VENTES_KEY, ventes);
+  // Payload = uniquement les colonnes de saisie B,D,F,G,I,L — jamais C,E,H,J,K,M,N (formules du Sheet)
+  syncToSheet('VENTES', { date: rec.date, ref: rec.ref, qte: rec.qte, imei: rec.imei, remise: rec.remise, modePaiement: rec.modePaiement }, 'append');
   p.stock = Math.max(0, (Number(p.stock)||0) - qte);
   save(CAT_KEY, catalogue);
   document.getElementById('venteModalBg').classList.remove('show');
@@ -1494,7 +1551,7 @@ document.getElementById('venteSaveBtn').addEventListener('click', () => {
 document.getElementById('prodCancelBtn').addEventListener('click', () => document.getElementById('prodModalBg').classList.remove('show'));
 document.getElementById('prodSaveBtn').addEventListener('click', () => {
   const rec = {
-    ref: document.getElementById('p_ref').value,
+    ref: 'TMP-' + genId('CAT', catalogue, 'ref'), // identifiant local temporaire uniquement (cache) — la vraie référence (colonne B) est générée par la formule du Sheet
     designation: document.getElementById('p_designation').value,
     categorie: document.getElementById('p_categorie').value,
     marque: document.getElementById('p_marque').value,
@@ -1502,14 +1559,19 @@ document.getElementById('prodSaveBtn').addEventListener('click', () => {
     alias: document.getElementById('p_alias').value,
     prixAchat: Number(document.getElementById('p_prixAchat').value)||0,
     prixVente: Number(document.getElementById('p_prixVente').value)||0,
-    stock: Number(document.getElementById('p_stock').value)||0,
+    stock: 0, // calculé par le Sheet, jamais saisi ni envoyé
     stockMin: Number(document.getElementById('p_stockMin').value)||2,
-    statut: 'Disponible',
+    statut: document.getElementById('p_statut').value,
   };
-  if (!rec.ref || !rec.designation){ alert('Référence et désignation sont requises.'); return; }
-  catalogue.push(rec); save(CAT_KEY, catalogue); syncToSheet('CATALOGUE PRODUITS', rec, 'append');
+  if (!rec.designation){ alert('La désignation est requise.'); return; }
+  catalogue.push(rec); save(CAT_KEY, catalogue);
+  // Payload = uniquement les colonnes de saisie C,D,E,F,G,H,J,K — jamais B,I,L,M,N (formules du Sheet)
+  syncToSheet('CATALOGUE PRODUITS', {
+    designation: rec.designation, categorie: rec.categorie, marque: rec.marque, modele: rec.modele,
+    alias: rec.alias, prixAchat: rec.prixAchat, prixVente: rec.prixVente, stockMin: rec.stockMin, statut: rec.statut,
+  }, 'append');
   document.getElementById('prodModalBg').classList.remove('show');
-  ['p_ref','p_designation','p_categorie','p_marque','p_modele','p_alias','p_prixAchat','p_prixVente'].forEach(id => document.getElementById(id).value = '');
+  ['p_designation','p_marque','p_modele','p_alias','p_prixAchat','p_prixVente'].forEach(id => document.getElementById(id).value = '');
   populateCategorieFilter(); renderDash(); renderCatalogue();
 });
 
@@ -1524,24 +1586,30 @@ document.getElementById('a_ref').addEventListener('change', (e) => {
 document.getElementById('achatCancelBtn').addEventListener('click', () => document.getElementById('achatModalBg').classList.remove('show'));
 document.getElementById('achatSaveBtn').addEventListener('click', () => {
   const qte = Number(document.getElementById('a_qte').value)||1;
-  const prixUnit = Number(document.getElementById('a_prixUnit').value)||0;
+  const prixUnit = Number(document.getElementById('a_prixUnit').value)||0; // indicatif local uniquement, colonne H = formule du Sheet
+  const dateReception = document.getElementById('a_dateReception').value;
   const rec = {
     date: new Date().toISOString().slice(0,10),
-    bon: document.getElementById('a_bon').value || genId('ACH', achats, 'bon'),
+    bon: 'TMP-' + genId('ACH', achats, 'bon'), // identifiant local (cache) — la vraie colonne C est une formule du Sheet
     ref: document.getElementById('a_ref').value,
     designation: document.getElementById('a_designation').value,
     fournisseur: document.getElementById('a_fournisseur').value,
     qte, prixUnit, montant: qte*prixUnit,
-    dateReception: '', statut: document.getElementById('a_statut').value,
+    dateReception, statut: document.getElementById('a_statut').value,
   };
   if (!rec.fournisseur){ alert('Le fournisseur est requis.'); return; }
-  if (rec.statut === 'Reçu' && rec.ref) {
+  if (/^re[çc]u$/i.test(rec.statut) && rec.ref) {
     const s = stock.find(s => s.ref === rec.ref);
     if (s) { s.stockActuel = (Number(s.stockActuel)||0) + qte; save(STOCK_KEY, stock); }
   }
-  achats.push(rec); save(ACHATS_KEY, achats); syncToSheet('ACHATS FOURNISSEURS', rec, 'append');
+  achats.push(rec); save(ACHATS_KEY, achats);
+  // Payload = uniquement les colonnes de saisie B,D,F,G,J,K — jamais C,E,H,I (formules du Sheet, "NE RENSEIGNER PAS C,H,I")
+  syncToSheet('ACHATS FOURNISSEURS', {
+    date: rec.date, ref: rec.ref, fournisseur: rec.fournisseur, qte: rec.qte,
+    dateReception: rec.dateReception, statut: rec.statut,
+  }, 'append');
   document.getElementById('achatModalBg').classList.remove('show');
-  ['a_designation','a_fournisseur','a_prixUnit'].forEach(id => document.getElementById(id).value = '');
+  ['a_designation','a_fournisseur','a_dateReception'].forEach(id => document.getElementById(id).value = '');
   renderAchats(); renderStock(); renderDash();
 });
 
@@ -1571,7 +1639,9 @@ document.getElementById('techSaveBtn').addEventListener('click', () => {
     poste: document.getElementById('t_poste').value,
   };
   if (!rec.nom){ alert('Le nom est requis.'); return; }
-  techniciens.push(rec); save(TECH_KEY, techniciens); syncToSheet('TECHNICIENS', rec);
+  techniciens.push(rec); save(TECH_KEY, techniciens);
+  // Payload = uniquement B (nom) et D (poste) — la colonne C (WhatsApp) reste gérée par le Sheet
+  syncToSheet('TECHNICIENS', { nom: rec.nom, poste: rec.poste }, 'append');
   document.getElementById('techModalBg').classList.remove('show');
   ['t_nom','t_whatsapp','t_poste'].forEach(id => document.getElementById(id).value = '');
   renderTechniciens();
@@ -1583,13 +1653,14 @@ document.getElementById('esSaveBtn').addEventListener('click', () => {
   const rec = {
     date: new Date().toISOString().slice(0,10),
     service: document.getElementById('e_service').value,
+    nombre: Number(document.getElementById('e_nombre').value)||1,
     montant: Number(document.getElementById('e_montant').value)||0,
     client: document.getElementById('e_client').value,
     statutPaiement: document.getElementById('e_statutPaiement').value,
     statutDocument: document.getElementById('e_statutDocument').value,
   };
   if (!rec.service || !rec.client){ alert('Service et client sont requis.'); return; }
-  eservice.push(rec); save(ESERV_KEY, eservice); syncToSheet('E-SERVICEAUTRES', rec);
+  eservice.push(rec); save(ESERV_KEY, eservice); syncToSheet('E-SERVICEAUTRES', rec, 'append');
   document.getElementById('esModalBg').classList.remove('show');
   ['e_service','e_client','e_montant'].forEach(id => document.getElementById(id).value = '');
   renderEservice();
