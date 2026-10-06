@@ -951,12 +951,13 @@ function applyRolePermissions(){
         : 'none';
   }
 }
-  function updateAdminSettingsVisibility(){
+function updateAdminSettingsVisibility(){
+  const role = String(session?.role || '').trim().toUpperCase();
+  const statut = String(session?.statut || '').trim().toUpperCase();
 
   const isAdmin =
-    session &&
-    String(session.role || '').trim().toUpperCase() === 'ADMIN' &&
-    String(session.statut || '').trim().toUpperCase() === 'ACTIF';
+    role === 'ADMIN' &&
+    (statut === 'ACTIF' || statut === '');
 
   const cfgBtn = document.getElementById('cfgBtn');
 
