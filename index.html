@@ -973,7 +973,7 @@ function updateAdminSettingsVisibility(){
 // CONFIGURATION SYNCHRONISATION
 // ================================
 
-document.getElementById('cfgBtn').addEventListener('click', function () {
+function ouvrirConfigurationSynchronisation() {
 
     const modal = document.getElementById('cfgModalBg');
 
@@ -988,8 +988,23 @@ document.getElementById('cfgBtn').addEventListener('click', function () {
     document.getElementById('cfgTestResult').style.display = 'none';
 
     modal.style.display = 'flex';
-});
+}
 
+
+// Bouton configuration dans l'application
+const cfgBtn = document.getElementById('cfgBtn');
+
+if (cfgBtn) {
+    cfgBtn.addEventListener('click', ouvrirConfigurationSynchronisation);
+}
+
+
+// Bouton configuration sur l'écran de connexion
+const lgCfgBtn = document.getElementById('lg_cfgBtn');
+
+if (lgCfgBtn) {
+    lgCfgBtn.addEventListener('click', ouvrirConfigurationSynchronisation);
+}
 document.getElementById('cfgCancelBtn').addEventListener('click', function () {
     document.getElementById('cfgModalBg').style.display = 'none';
 });
