@@ -955,8 +955,10 @@ function updateAdminSettingsVisibility(){
   const cfgBtn = document.getElementById('cfgBtn');
 
   if (cfgBtn) {
-    cfgBtn.style.display = '';
+    cfgBtn.removeAttribute('hidden');
+    cfgBtn.style.display = 'block';
     cfgBtn.style.visibility = 'visible';
+    cfgBtn.style.opacity = '1';
   }
 
   const lgCfgBtn = document.getElementById('lg_cfgBtn');
