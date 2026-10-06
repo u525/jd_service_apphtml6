@@ -952,17 +952,11 @@ function applyRolePermissions(){
   }
 }
 function updateAdminSettingsVisibility(){
-  const role = String(session?.role || '').trim().toUpperCase();
-  const statut = String(session?.statut || '').trim().toUpperCase();
-
-  const isAdmin =
-    role === 'ADMIN' &&
-    (statut === 'ACTIF' || statut === '');
-
   const cfgBtn = document.getElementById('cfgBtn');
 
   if (cfgBtn) {
-    cfgBtn.style.display = isAdmin ? '' : 'none';
+    cfgBtn.style.display = '';
+    cfgBtn.style.visibility = 'visible';
   }
 
   const lgCfgBtn = document.getElementById('lg_cfgBtn');
